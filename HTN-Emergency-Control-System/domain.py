@@ -1,6 +1,4 @@
-# -------------------------
 # Primitive Operators
-# -------------------------
 
 def call_fire_department(state):
     if state["fire_detected"]:
@@ -64,9 +62,7 @@ def call_police(state):
     return state
 
 
-# -------------------------
 # Compound Task Methods
-# -------------------------
 
 def method_handle_fire_emergency(state):
     if state["emergency_type"] == "fire":
@@ -168,9 +164,7 @@ def method_resolve_medical(state):
     return None
 
 
-# -------------------------
 # Register Domain
-# -------------------------
 
 methods = {
     "handle_emergency": [
