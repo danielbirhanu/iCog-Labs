@@ -21,8 +21,8 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 
 const proto = grpc.loadPackageDefinition(packageDefinition).aiinference;
 
-const PORT = process.env.SERVER_PORT || 50051;
-const API_KEY = process.env.API_KEY || "my-secret-key";
+const PORT = 50051;
+const API_KEY = "my-secret-key";
 
 function checkAuth(call, callback) {
   const metadata = call.metadata.get("authorization");
@@ -45,9 +45,6 @@ function checkAuth(call, callback) {
 
 function AnalyzeSentiment(call, callback) {
   if (!checkAuth(call, callback)) return;
-
-  console.log(`[Server ${PORT}] Unary request received: ${call.request.text}`);
-
   // Bonus deadline test: client timeout is 2s, server sleeps 3s
   setTimeout(() => {
     const result = analyzeSentiment(call.request.text);
@@ -61,8 +58,6 @@ function AnalyzeSentiment(call, callback) {
 
 function GenerateText(call) {
   if (!checkAuth(call)) return;
-
-  console.log(`[Server ${PORT}] Server streaming prompt: ${call.request.prompt}`);
 
   const response = generateText(call.request.prompt);
   const tokens = response.split(" ");

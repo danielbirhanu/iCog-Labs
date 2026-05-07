@@ -24,8 +24,6 @@ metadata.add("authorization", "Bearer my-secret-key");
 
 function testUnary() {
   return new Promise((resolve) => {
-    console.log("\n========== Task 2: Unary RPC - Sentiment Analysis ==========");
-
     const deadline = new Date();
     deadline.setSeconds(deadline.getSeconds() + 2);
 
@@ -60,8 +58,6 @@ function testUnary() {
 
 function testServerStreaming() {
   return new Promise((resolve) => {
-    console.log("\n========== Task 3: Server Streaming - Text Generation ==========");
-
     const call = client.GenerateText(
       {
         prompt: "Explain why gRPC is useful for AI services"
@@ -89,8 +85,6 @@ function testServerStreaming() {
 
 function testClientStreaming() {
   return new Promise((resolve) => {
-    console.log("\n========== Task 4: Client Streaming - Batch Summarization ==========");
-
     const call = client.SummarizeDocument(metadata, (error, response) => {
       if (error) {
         console.log(`gRPC Error: ${error.message}`);
@@ -122,8 +116,6 @@ function testClientStreaming() {
 
 function testBidirectionalStreaming() {
   return new Promise((resolve) => {
-    console.log("\n========== Task 5: Bidirectional Streaming - Live Chat ==========");
-
     const call = client.LiveChat(metadata);
 
     call.on("data", (message) => {
