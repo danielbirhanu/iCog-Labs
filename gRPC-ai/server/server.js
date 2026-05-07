@@ -21,8 +21,9 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 
 const proto = grpc.loadPackageDefinition(packageDefinition).aiinference;
 
-const PORT = 50051;
-const API_KEY = "my-secret-key";
+const HOST = process.env.SERVER_HOST || "127.0.0.1";
+const PORT = process.env.SERVER_PORT || 50051;
+const API_KEY = process.env.API_KEY || "my-secret-key";
 
 function checkAuth(call, callback) {
   const metadata = call.metadata.get("authorization");
@@ -136,6 +137,7 @@ function LiveChat(call) {
 
 function main() {
   const server = new grpc.Server();
+  const keepAlive = setInterval(() => {}, 1 << 30);
 
   server.addService(proto.AIInference.service, {
     AnalyzeSentiment,
@@ -145,7 +147,7 @@ function main() {
   });
 
   server.bindAsync(
-    `0.0.0.0:${PORT}`,
+    `${HOST}:${PORT}`,
     grpc.ServerCredentials.createInsecure(),
     (error, bindPort) => {
       if (error) {
@@ -153,10 +155,20 @@ function main() {
         return;
       }
 
-      console.log(`gRPC AI Inference Server running on port ${bindPort}`);
+      console.log(`gRPC AI Inference Server running on ${HOST}:${bindPort}`);
       server.start();
     }
   );
+
+  process.on("SIGINT", () => {
+    clearInterval(keepAlive);
+    server.tryShutdown(() => process.exit(0));
+  });
+
+  process.on("SIGTERM", () => {
+    clearInterval(keepAlive);
+    server.tryShutdown(() => process.exit(0));
+  });
 }
 
 main();

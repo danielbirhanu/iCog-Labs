@@ -2,30 +2,38 @@
 
 This project is a small Node.js gRPC demo that simulates an AI inference service. It shows how a client can call a backend service using different gRPC communication patterns: unary calls, server streaming, client streaming, and bidirectional streaming.
 
-The system uses Nginx as a gRPC load balancer in front of three identical backend server containers.
+It can run in two ways:
+
+- Locally, with one Node.js gRPC server on `localhost:50051`.
+- With Docker, using Nginx on `localhost:8080` as a gRPC load balancer in front of three server containers.
 
 ## Workflow
 
-The client sends gRPC requests to Nginx on `localhost:8080`. Nginx forwards each request to one of the backend Node.js gRPC servers. The server checks the API key from the request metadata, handles the RPC method, calls the mock AI logic in `server/aiEngine.js`, and sends the response back to the client.
+The client sends gRPC requests to the server. The server checks the API key from the request metadata, handles the RPC method, calls the mock AI logic in `server/aiEngine.js`, and sends the response back to the client.
 
 ```txt
 client/client.js
       |
       | gRPC request
       v
-Nginx load balancer :8080
-      |
-      v
-server1 / server2 / server3 :50051
+server/server.js :50051
       |
       v
 server/aiEngine.js
 ```
 
+When running with Docker, the client can connect to Nginx instead:
+
+```txt
+client/client.js -> Nginx :8080 -> server1 / server2 / server3 :50051
+```
+
 ## Project Structure
 
 ```txt
-gRPC/
+gRPC-ai/
+  package.json         # Convenience scripts for local and Docker runs
+
   client/
     client.js          # Test client for all RPC methods
     package.json       # Client dependencies and start script
@@ -102,9 +110,43 @@ The server compares the token against the `API_KEY` environment variable. If no 
 my-secret-key
 ```
 
+## Local Setup
+
+Install dependencies for both the server and client:
+
+```powershell
+npm.cmd run install:all
+```
+
+If your terminal allows normal npm commands, this also works:
+
+```powershell
+npm run install:all
+```
+
+## Run Locally Without Docker
+
+Open one terminal from the `gRPC-ai` directory and start the server:
+
+```powershell
+npm.cmd run server
+```
+
+Open a second terminal from the `gRPC-ai` directory and run the client:
+
+```powershell
+npm.cmd run client
+```
+
+By default, the local client connects to:
+
+```txt
+localhost:50051
+```
+
 ## Run With Docker
 
-From the `gRPC` directory:
+From the `gRPC-ai` directory:
 
 ```powershell
 docker compose up --build
@@ -129,17 +171,40 @@ Each backend server listens internally on:
 50051
 ```
 
-## Run The Client
-
-Open another terminal and run:
+Or use the helper script:
 
 ```powershell
-cd client
-npm install
-npm start
+npm.cmd run docker:up
+```
+
+Then open another terminal and run the client through Nginx:
+
+```powershell
+npm.cmd run client:docker
 ```
 
 The client will run all four RPC demos in order.
+
+## Environment Variables
+
+The server supports:
+
+```txt
+SERVER_HOST=127.0.0.1
+SERVER_PORT=50051
+API_KEY=my-secret-key
+```
+
+The client supports:
+
+```txt
+GRPC_TARGET=localhost:50051
+API_KEY=my-secret-key
+```
+
+For local runs, `GRPC_TARGET` defaults to `localhost:50051`.
+
+For Docker/Nginx runs, use `GRPC_TARGET=localhost:8080`.
 
 ## Expected Behavior
 

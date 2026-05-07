@@ -5,6 +5,7 @@ services:
       dockerfile: server/Dockerfile
     container_name: ai_server_1
     environment:
+      - SERVER_HOST=0.0.0.0
       - SERVER_PORT=50051
       - API_KEY=my-secret-key
     expose:
@@ -16,6 +17,7 @@ services:
       dockerfile: server/Dockerfile
     container_name: ai_server_2
     environment:
+      - SERVER_HOST=0.0.0.0
       - SERVER_PORT=50051
       - API_KEY=my-secret-key
     expose:
@@ -27,6 +29,7 @@ services:
       dockerfile: server/Dockerfile
     container_name: ai_server_3
     environment:
+      - SERVER_HOST=0.0.0.0
       - SERVER_PORT=50051
       - API_KEY=my-secret-key
     expose:

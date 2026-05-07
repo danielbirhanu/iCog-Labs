@@ -14,13 +14,16 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 
 const proto = grpc.loadPackageDefinition(packageDefinition).aiinference;
 
+const GRPC_TARGET = process.env.GRPC_TARGET || "localhost:50051";
+const API_KEY = process.env.API_KEY || "my-secret-key";
+
 const client = new proto.AIInference(
-  "localhost:8080",
+  GRPC_TARGET,
   grpc.credentials.createInsecure()
 );
 
 const metadata = new grpc.Metadata();
-metadata.add("authorization", "Bearer my-secret-key");
+metadata.add("authorization", `Bearer ${API_KEY}`);
 
 function testUnary() {
   return new Promise((resolve) => {
@@ -157,6 +160,8 @@ function testBidirectionalStreaming() {
 }
 
 async function main() {
+  console.log(`Connecting to gRPC server at ${GRPC_TARGET}`);
+
   await testUnary();
   await testServerStreaming();
   await testClientStreaming();

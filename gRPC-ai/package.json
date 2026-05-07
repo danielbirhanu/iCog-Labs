@@ -1,0 +1,14 @@
+{
+  "name": "grpc-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local scripts for the AI inference gRPC demo.",
+  "scripts": {
+    "install:all": "npm --prefix server install && npm --prefix client install",
+    "server": "node server/server.js",
+    "client": "node client/client.js",
+    "client:docker": "set GRPC_TARGET=localhost:8080&& npm --prefix client start",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
+  }
+}
