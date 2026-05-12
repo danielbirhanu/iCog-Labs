@@ -25,8 +25,14 @@ const client = new proto.AIInference(
 const metadata = new grpc.Metadata();
 metadata.add("authorization", `Bearer ${API_KEY}`);
 
+function printSection(title) {
+  console.log(title);
+}
+
 function testUnary() {
   return new Promise((resolve) => {
+    printSection("1. Unary RPC - Sentiment Analysis");
+
     const deadline = new Date();
     deadline.setSeconds(deadline.getSeconds() + 2);
 
@@ -61,6 +67,8 @@ function testUnary() {
 
 function testServerStreaming() {
   return new Promise((resolve) => {
+    printSection("2. Server Streaming RPC - Text Generation");
+
     const call = client.GenerateText(
       {
         prompt: "Explain why gRPC is useful for AI services"
@@ -88,6 +96,8 @@ function testServerStreaming() {
 
 function testClientStreaming() {
   return new Promise((resolve) => {
+    printSection("3. Client Streaming RPC - Document Summarization");
+
     const call = client.SummarizeDocument(metadata, (error, response) => {
       if (error) {
         console.log(`gRPC Error: ${error.message}`);
@@ -119,6 +129,8 @@ function testClientStreaming() {
 
 function testBidirectionalStreaming() {
   return new Promise((resolve) => {
+    printSection("4. Bidirectional Streaming RPC - Live Chat");
+
     const call = client.LiveChat(metadata);
 
     call.on("data", (message) => {
@@ -160,12 +172,15 @@ function testBidirectionalStreaming() {
 }
 
 async function main() {
+  printSection("gRPC AI Client");
   console.log(`Connecting to gRPC server at ${GRPC_TARGET}`);
 
   await testUnary();
   await testServerStreaming();
   await testClientStreaming();
   await testBidirectionalStreaming();
+
+  printSection("All RPC demos completed");
 }
 
 main();

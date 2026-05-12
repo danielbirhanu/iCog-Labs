@@ -46,9 +46,15 @@ function checkAuth(call, callback) {
 
 function AnalyzeSentiment(call, callback) {
   if (!checkAuth(call, callback)) return;
+
+  console.log(`\n[Server ${PORT}] Unary RPC - AnalyzeSentiment`);
+  console.log(`[Server ${PORT}] Text: ${call.request.text}`);
+
   // Bonus deadline test: client timeout is 2s, server sleeps 3s
   setTimeout(() => {
     const result = analyzeSentiment(call.request.text);
+
+    console.log(`[Server ${PORT}] Sentiment result: ${result.label} (${result.confidence})`);
 
     callback(null, {
       label: result.label,
@@ -60,6 +66,9 @@ function AnalyzeSentiment(call, callback) {
 function GenerateText(call) {
   if (!checkAuth(call)) return;
 
+  console.log(`\n[Server ${PORT}] Server Streaming RPC - GenerateText`);
+  console.log(`[Server ${PORT}] Prompt: ${call.request.prompt}`);
+
   const response = generateText(call.request.prompt);
   const tokens = response.split(" ");
 
@@ -68,6 +77,7 @@ function GenerateText(call) {
   const interval = setInterval(() => {
     if (index >= tokens.length) {
       clearInterval(interval);
+      console.log(`[Server ${PORT}] Text generation stream completed`);
       call.end();
       return;
     }
@@ -83,6 +93,7 @@ function GenerateText(call) {
 function SummarizeDocument(call, callback) {
   if (!checkAuth(call, callback)) return;
 
+  console.log(`\n[Server ${PORT}] Client Streaming RPC - SummarizeDocument`);
   console.log(`[Server ${PORT}] Client streaming started`);
 
   let fullText = "";
@@ -94,6 +105,8 @@ function SummarizeDocument(call, callback) {
 
   call.on("end", () => {
     const summary = summarizeText(fullText);
+
+    console.log(`[Server ${PORT}] Summary generated`);
 
     callback(null, {
       summary
@@ -108,11 +121,14 @@ function SummarizeDocument(call, callback) {
 function LiveChat(call) {
   if (!checkAuth(call)) return;
 
+  console.log(`\n[Server ${PORT}] Bidirectional Streaming RPC - LiveChat`);
   console.log(`[Server ${PORT}] Bidirectional streaming chat started`);
 
   const history = [];
 
   call.on("data", (message) => {
+    console.log(`[Server ${PORT}] ${message.role}: ${message.content}`);
+
     history.push({
       role: message.role,
       content: message.content
@@ -127,6 +143,7 @@ function LiveChat(call) {
   });
 
   call.on("end", () => {
+    console.log(`[Server ${PORT}] Live chat stream ended`);
     call.end();
   });
 
