@@ -4,7 +4,7 @@ from model import GPTLanguageModel
 
 batch_size = 64
 block_size = 128
-max_iters = 250
+max_iters = 1000
 eval_interval = 500
 learning_rate = 3e-4
 device = "cuda" if torch.cuda.is_available() else "cpu"
