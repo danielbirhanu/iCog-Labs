@@ -8,18 +8,15 @@ class ConnectFour:
         self.current_player = 1  # Player 1 or Player 2 (-1)
 
     def clone(self):
-        """Creates a deep copy of the current game state."""
         new_game = ConnectFour()
         new_game.board = np.copy(self.board)
         new_game.current_player = self.current_player
         return new_game
 
     def get_valid_moves(self):
-        """Returns columns that are not full (0-indexed)."""
         return [col for col in range(self.COLS) if self.board[0][col] == 0]
 
     def make_move(self, col):
-        """Drops a piece into the designated column applying gravity."""
         if self.board[0][col] != 0:
             raise ValueError(f"Column {col} is full!")
         
@@ -32,10 +29,6 @@ class ConnectFour:
         self.current_player = -self.current_player
 
     def check_winner(self):
-        """
-        Checks the board for a win condition.
-        Returns: 1 or -1 if someone won, 0 for a draw, None if game is ongoing.
-        """
         # Check horizontal
         for r in range(self.ROWS):
             for c in range(self.COLS - 3):
@@ -71,7 +64,6 @@ class ConnectFour:
         return None
 
     def render(self):
-        """Renders a clean, text-based visual grid of the board."""
         symbols = {0: " . ", 1: " X ", -1: " O "}
         print("\n" + " ".join([f"[{i}]" for i in range(self.COLS)]))
         print("-" * 27)

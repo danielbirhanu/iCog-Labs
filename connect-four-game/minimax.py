@@ -1,7 +1,6 @@
 class MinimaxAgent:
     def __init__(self, depth=4):
         self.max_depth = depth
-        # Positional heuristic scoring matrix to prioritize the center columns
         self.evaluation_matrix = [
             [3, 4, 5, 7, 5, 4, 3],
             [3, 4, 5, 7, 5, 4, 3],
@@ -12,7 +11,6 @@ class MinimaxAgent:
         ]
 
     def evaluate_board(self, game):
-        """Heuristic evaluation tracking positional strength."""
         score = 0
         for r in range(6):
             for c in range(7):
